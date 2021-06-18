@@ -1,17 +1,24 @@
 <?php
 namespace core;
-use core\interfaces\Controller;
+use core\interfaces\ControllerInterface;
 
-class BaseController implements Controller
+class BaseController implements ControllerInterface
 {
     private $request;
     private $response;
     private $status;
     private $headers;
+    protected $view;
 
-    public function runAction(string $name, array $params)
+    public function __construct()
     {
-        if (method_exists($this, $name) && is_callable($this->$name)) {
+        $this->view = new View();
+    }
+
+    public function runAction(string $name, array $params = [])
+    {
+        $name = 'action'.ucfirst($name);
+        if (method_exists($this, $name)) {
             return $this->$name(extract($params));
         }
         throw new \Exception("Wrong action");
