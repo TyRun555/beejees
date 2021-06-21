@@ -20,7 +20,7 @@ class BaseController implements ControllerInterface
     {
         $name = 'action'.ucfirst($name);
         if (method_exists($this, $name)) {
-            return $this->$name(extract($params));
+            return call_user_func_array([$this, $name], $params);
         }
         throw new \Exception("Wrong action");
     }

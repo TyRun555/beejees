@@ -24,7 +24,7 @@ class Task
 
     const STATUSES = [
         self::STATUS_NEW => '',
-        self::STATUS_EDITED => 'Отредактировано',
+        self::STATUS_EDITED => 'отредактировано администратором',
         self::STATUS_DONE => 'Выполнено',
     ];
 
@@ -69,7 +69,7 @@ class Task
 
     public function getStatus(): ?array
     {
-        return json_decode($this->status , 1) ?: null;
+        return json_decode($this->status, 1) ?: null;
     }
 
     public function setUsername(string $username): void
@@ -94,17 +94,27 @@ class Task
 
     public function setText(string $text): void
     {
-        $this->text = htmlspecialchars(strip_tags($text));
+        $this->text = trim(htmlspecialchars($text));
     }
 
     public function getText(): ?string
     {
-        return html_entity_decode($this->text);
+        return $this->text;
+    }
+
+    public function renderText()
+    {
+        return html_entity_decode(nl2br($this->getText()));
     }
 
     public function printableStatus()
     {
         $statuses = $this->getStatus();
+        return is_array($statuses)
+            ? implode('<br>', array_map(function ($status) {
+            return '<span class="badge bg-success">' . self::STATUSES[$status] . '</span>';
+        }, $statuses))
+            : null;
     }
 
     public static function getPagination(int $pageSize = 3)
@@ -126,6 +136,12 @@ class Task
 
         $pagination = new Pagination(3, $totalTasks, 'taskPage');
         return ['pagination' => $pagination, 'tasks' => $paginator];
+    }
+
+    public function isDone(): bool
+    {
+        $status = $this->getStatus();
+        return is_array($status) && in_array(self::STATUS_DONE, $status);
     }
 
 

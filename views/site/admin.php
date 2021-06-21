@@ -7,30 +7,34 @@
  */
 $this->title = 'Задачи';
 ?>
-<table class="table table-responsive-md">
-    <caption>
-        <?php $pagination->renderPagination(); ?>
-    </caption>
-    <tr>
-        <th class="table-hover">Статус</th>
-        <th>Email</th>
-        <th>Имя пользователя</th>
-        <th>Содержание</th>
-        <th>Действие</th>
-    </tr>
-    <?php
-    if (count($tasks)) {
-        foreach ($tasks as $task) { ?>
-            <tr>
-                <td><?= $task->getStatus() ?></td>
-                <td><?= $task->getEmail() ?></td>
-                <td><?= $task->getUsername() ?></td>
-                <td><?= $task->getText() ?></td>
-                <td><a href="/task/update/<?= $task->getId() ?>" class="btn btn-sm btn-warning">Изменить</a>
-                    <a href="/task/delete/<?= $task->getId() ?>" class="btn btn-sm btn-danger">Удалить</a></td>
-            </tr>
-        <?php }
-    } else { ?>
-        <td colspan="4">Список задач пуст</td>
-    <?php } ?>
-</table>
+<div class="table-responsive">
+    <table class="table">
+        <caption>
+            <?php $pagination->renderPagination(); ?>
+        </caption>
+        <tr>
+            <th class="col-2">Имя пользователя</th>
+            <th class="col-2">Email</th>
+            <th class="col-6">Содержание</th>
+            <th class="col-1">Статус</th>
+            <th class="col-1">Действие</th>
+        </tr>
+        <?php
+        if (count($tasks)) {
+            foreach ($tasks as $task) { ?>
+                <tr>
+                    <td class="col-2"><?= $task->getUsername() ?></td>
+                    <td class="col-2"><?= $task->getEmail() ?></td>
+                    <td class="col-5"><?= $task->renderText() ?></td>
+                    <td class="col-2"><?= $task->printableStatus() ?></td>
+                    <td class="col-1">
+                        <a href="/task/update/<?= $task->getId() ?>" class="col-12 btn btn-sm btn-warning mb-1">Изменить</a>
+                        <a href="/task/delete/<?= $task->getId() ?>" class="col-12 btn btn-sm btn-danger" onclick="return confirm('Вы уверены?');">Удалить</a>
+                    </td>
+                </tr>
+            <?php }
+        } else { ?>
+            <td colspan="4">Список задач пуст</td>
+        <?php } ?>
+    </table>
+</div>

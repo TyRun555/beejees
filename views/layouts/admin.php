@@ -26,10 +26,22 @@ use models\User;
 <header id="header">
     <div class="wrap">
         <div class="container">
-            <div class="row">
-                <div class="col-md-12 d-flex justify-content-end mb-1 mt-1">
+            <div class="row bg-dark">
+                <div class="col-10">
+                    <nav class="navbar navbar-dark bg-dark">
+                        <ul class="navbar-nav mr-auto">
+                            <li class="nav-item">
+                                <a class="nav-link <?= App::$app->getUrl() == '/admin' ? 'active' : '' ?>" href="/admin">
+                                    Список задач
+                                </a>
+                            </li>
+                        </ul>
+
+                    </nav>
+                </div>
+                <div class="col-md-2 d-flex justify-content-end align-items-center mb-1 mt-1">
                     <?php if (App::$app->user) { ?>
-                        <a href="/logout" class="btn btn-danger align-self-end">Выйти</a>
+                        <a href="/logout" class="btn btn-danger">Выйти</a>
                     <?php } ?>
                 </div>
             </div>
@@ -61,6 +73,21 @@ use models\User;
                 </div>
             </div>
         </div>
+    <?php }
+    if (App::$app->getFlash('admin-error')) { ?>
+    <div class="toast-container position-absolute p-3 top-0 end-0" id="toastPlacement">
+        <div class="toast show align-items-center text-white bg-danger border-0" role="alert"
+             aria-live="assertive"
+             aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <?= App::$app->getFlash('admin-error'); ?>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
     <?php } ?>
 </main>
 </body>

@@ -9,6 +9,7 @@ use models\User;
 
 class App
 {
+    const ALLOWED_HTML_TAGS = '<b><i><ul><li><h2>';
     private array $params;
     private ControllerInterface $controller;
     private array $route;
@@ -45,9 +46,14 @@ class App
 
     }
 
+    /**
+     * @throws \Exception
+     */
     public function run(): ?string
     {
-        return $this->controller->runAction($this->route['action']);
+        $action = $this->route['action'];
+        unset($this->route['controller'],$this->route['action']);
+        return $this->controller->runAction($action, $this->route);
     }
 
     private function parseRequest(): void
@@ -72,7 +78,7 @@ class App
     private function getRouteFromUrl(): array
     {
         $url = $this->getUrl();
-        $urlArray = explode('/', $url);
+        $urlArray = array_filter(explode('/', $url));
 
         if (!empty($this->params['routes'])) {
             foreach ($this->params['routes'] as $rule => $route) {
@@ -81,14 +87,16 @@ class App
                 $params = [];
                 preg_match_all('/<([^<>]*)>/', $rule, $ruleMatches);
                 preg_match_all('/<([^<>]*)>/', $route, $routeMatches);
-                if ($url == $rule && empty($matches[1])) {
+                if ($url == $rule && empty($ruleMatches[1])) {
                     return ['controller' => array_shift($routeParts), 'action' => array_shift($routeParts), 'params' => $params];
                 } else {
                     /**
                      * Случаи совпадения URL c wildcard шаблона маршрута и отличия от правила
                      */
                     if (array_search('controller', $ruleMatches[1]) !== false) {
-                        return array_combine(array_values($ruleMatches[1]), array_filter(array_values($urlArray)));
+                        if (count($urlArray) == count($ruleMatches[1])) {
+                            return array_combine(array_values($ruleMatches[1]), $urlArray);
+                        }
                     }
                 }
             }
@@ -99,11 +107,11 @@ class App
     private function stripTagsFromRequestArray(array $arr): array
     {
         return array_map(function ($item) {
-            return is_array($item) ? $this->stripTagsFromRequestArray($item) : strip_tags($item);
+            return is_array($item) ? $this->stripTagsFromRequestArray($item) : strip_tags($item, self::ALLOWED_HTML_TAGS);
         }, $arr);
     }
 
-    private function getUrl(): string
+    public function getUrl(): string
     {
         return stristr($_SERVER['REQUEST_URI'], '?') ? explode("?", $_SERVER['REQUEST_URI'])[0] : $_SERVER['REQUEST_URI'];
     }

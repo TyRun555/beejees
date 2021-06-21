@@ -12,6 +12,8 @@ return [
         '/' => 'site/index',
         '/login' => 'site/login',
         '/logout' => 'site/logout',
+        '/admin' => 'site/admin',
+        '/<controller>/<action>/<id>' => '<controller>/<action>',
         '/<controller>/<action>' => '<controller>/<action>'
     ],
     'cookieSalt' => 'sdfsdf2332feswdfwedfsd'
