@@ -13,10 +13,10 @@ $this->title = 'Задачи';
             <?php $pagination->renderPagination(); ?>
         </caption>
         <tr>
-            <th class="col-2">Имя пользователя</th>
-            <th class="col-2">Email</th>
+            <th class="col-2 sortable" data-sort-param="username">Имя пользователя</th>
+            <th class="col-2 sortable" data-sort-param="email">Email</th>
             <th class="col-6">Содержание</th>
-            <th class="col-1">Статус</th>
+            <th class="col-2 sortable" data-sort-param="status">Статус</th>
             <th class="col-1">Действие</th>
         </tr>
         <?php

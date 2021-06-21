@@ -1,3 +1,7 @@
+/**
+ * Bootstrap валидация
+ */
+
 (function () {
     'use strict'
 
@@ -17,6 +21,9 @@
         })
 })()
 
+/**
+ * Уведомления
+ */
 var toastElList = [].slice.call(document.querySelectorAll('.toast'))
 var toastList = toastElList.map(function (toastEl) {
     let toast = new bootstrap.Toast(toastEl, {
@@ -27,28 +34,46 @@ var toastList = toastElList.map(function (toastEl) {
     toast.show();
 })
 
+/**
+ * Сортировка таблиц
+ */
 const sortable = document.getElementsByClassName('sortable');
 if (sortable && sortable.length) {
     [...sortable].forEach(function (element) {
+        let url = new URL(location.href);
+        let sort = url.searchParams.get('sort');
+        if (sort) {
+            let sorted = document.querySelector('[data-sort-param="' + sort.replace('-', '') + '"');
+            if (sorted) {
+                sorted.dataset.sortDirection = sort.substring(0, 1) === '-' ? '' : '-';
+                sorted.dataset.sorted = true;
+                console.log(sort);
+                console.log(element.dataset.sortDirection);
+                console.log(sort.replace(element.dataset.sortDirection, ''));
+
+            }
+        }
         element.addEventListener('click', function (e) {
             let sortable = new Sortable(element);
             sortable.sort()
         })
     })
 }
+
 class Sortable {
     element;
     direction;
     param;
+
     constructor(element) {
         this.element = element;
-        this.direction = element.getDataAttribute('sort-direction');
-        this.param = element.getDataAttribute('sort-param');
+        this.direction = element.dataset.sortDirection || '';
+        this.param = element.dataset.sortParam;
     }
-    sort()
-    {
+
+    sort() {
         let url = new URL(location.href);
-        url.searchParams.append('sort', this.direction+this.param);
+        url.searchParams.set('sort', this.direction + this.param);
         location.href = url.toString();
     }
 }

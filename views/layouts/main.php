@@ -21,9 +21,9 @@ use core\App;
 </head>
 <body>
 <header id="header">
-    <div class="wrap">
+    <div class="wrap bg-dark">
         <div class="container">
-            <div class="row bg-dark">
+            <div class="row">
                 <div class="col-md-12 d-flex justify-content-between mb-2 mt-2">
                     <button class="btn btn-success align-self-end" data-bs-toggle="modal" data-bs-target="#addTask">
                         Добавить задачу +

@@ -24,9 +24,9 @@ use models\User;
 </head>
 <body>
 <header id="header">
-    <div class="wrap">
+    <div class="wrap bg-dark">
         <div class="container">
-            <div class="row bg-dark">
+            <div class="row">
                 <div class="col-10">
                     <nav class="navbar navbar-dark bg-dark">
                         <ul class="navbar-nav mr-auto">

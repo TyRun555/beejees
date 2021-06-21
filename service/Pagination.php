@@ -1,4 +1,5 @@
 <?php
+
 namespace service;
 
 use core\App;
@@ -30,7 +31,12 @@ class Pagination
 
     private function getLink(int $page): string
     {
-        return '?' . $this->pageParam . '=' . $page;
+        $url = '?' . $_SERVER['QUERY_STRING'];
+        $oldQueryParam = $this->pageParam . '=' . $this->getCurrentPage();
+        $newQueryParam = $this->pageParam . '=' . $page;
+        return stristr($url, $oldQueryParam)
+            ? str_replace($oldQueryParam, $newQueryParam, $url)
+            : $url . '&' . $newQueryParam;
     }
 
     public function renderPagination()
@@ -53,7 +59,7 @@ class Pagination
                       </a>
                   </li>';
         }
-        for ($page = 1;$page <= $this->pagesCount && $page <= $totalPages;$page++) {
+        for ($page = 1; $page <= $this->pagesCount && $page <= $totalPages; $page++) {
             $pageNumber = $currentPage < $this->pagesCount ? $page : $page + $currentPage - $this->pagesCount;
             if ($this->getCurrentPage() == $pageNumber) {
                 echo "<li class='page-item active' aria-current='page'>
@@ -61,7 +67,7 @@ class Pagination
                       </li>";
             } else {
                 echo "<li class='page-item' aria-current='page'>
-                          <a class='page-link' href='".$this->getLink($pageNumber)."'>{$pageNumber}</a>
+                          <a class='page-link' href='" . $this->getLink($pageNumber) . "'>{$pageNumber}</a>
                       </li>";
             }
         }

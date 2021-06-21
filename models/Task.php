@@ -12,6 +12,7 @@ use service\Pagination;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * Сущность представляющая задачу
  * @Entity
  * @Table(name="tasks")
  */
@@ -102,29 +103,48 @@ class Task
         return $this->text;
     }
 
+    /**
+     * Возвращает отформатированный текст задачи
+     * @return string
+     */
     public function renderText()
     {
         return html_entity_decode(nl2br($this->getText()));
     }
 
+    /**
+     * Возвращает шаблон статуса в таблице
+     * @return string|null
+     */
     public function printableStatus()
     {
         $statuses = $this->getStatus();
         return is_array($statuses)
             ? implode('<br>', array_map(function ($status) {
-            return '<span class="badge bg-success">' . self::STATUSES[$status] . '</span>';
-        }, $statuses))
+                return '<span class="badge bg-success">' . self::STATUSES[$status] . '</span>';
+            }, $statuses))
             : null;
     }
 
-    public static function getPagination(int $pageSize = 3)
+    /**
+     * Возвращает массив с пагинацией и моделями для вывода на странице
+     * @param int $pageSize
+     * @return array
+     */
+    public static function getPagination(int $pageSize = 3): array
     {
         $entityManager = App::$app->entityManager;
         $page = (int)App::$app->get('taskPage') ?: 1;
-        $sortParam = substr(App::$app->get('tasksort'), 1) ?: 'id';
-        $sortDirection = substr($sortParam, 0, 1) == '-' ? 'DESC' : 'ASC';
 
-        $dql = "SELECT t FROM models\Task t ORDER BY t." . $sortParam . " " . $sortDirection;
+        $sortParam = stristr(App::$app->get('sort'), '-')
+            ? substr(App::$app->get('sort'), 1)
+            : App::$app->get('sort');
+
+        $sortDirection = substr(App::$app->get('sort'), 0, 1) == '-' ? 'DESC' : 'ASC';
+
+        $sortDirection = $sortParam == 'status' && $sortDirection == 'ASC' ? 'DESC' : 'ASC'; //Для статуса обратная логика из-за типа колонки JSON
+
+        $dql = "SELECT t FROM models\Task t ORDER BY t." . ($sortParam ?: 'id') . " " . $sortDirection;
         $query = $entityManager->createQuery($dql);
         $paginator = new Paginator($query);
 
