@@ -23,6 +23,7 @@ class SiteController extends BaseController
     public function actionLogin(): ?string
     {
         $this->view->layout = 'admin';
+
         if ($post = App::$app->post('User')) {
             $user = new User();
             $username = $post['username'] ?? null;

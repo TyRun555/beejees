@@ -19,7 +19,7 @@ $this->title = 'Вход в административный раздел';
     <div class="col-md-4">
         <label for="username" class="form-label">Имя пользователя</label>
         <div class="input-group has-validation">
-            <input type="text" name="User[username]" class="form-control" id="username" value="<?= $user->getUsername() ?? null ?>"
+            <input type="text" name="User[username]" class="form-control" id="username" value="<?= isset($user) ? $user->getUsername() : null ?>"
                    required>
             <div class="invalid-feedback">
                 Введите имя пользователя!

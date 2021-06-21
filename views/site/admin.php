@@ -28,8 +28,8 @@ $this->title = 'Задачи';
                     <td class="col-5"><?= $task->renderText() ?></td>
                     <td class="col-2"><?= $task->printableStatus() ?></td>
                     <td class="col-1">
-                        <a href="/task/update/<?= $task->getId() ?>" class="col-12 btn btn-sm btn-warning mb-1">Изменить</a>
-                        <a href="/task/delete/<?= $task->getId() ?>" class="col-12 btn btn-sm btn-danger" onclick="return confirm('Вы уверены?');">Удалить</a>
+                        <a href="/task/update/<?= $task->getId() ?>" class="col-12 btn btn-sm btn-warning mb-1"><i class="bi bi-pencil"></i></a>
+                        <a href="/task/delete/<?= $task->getId() ?>" class="col-12 btn btn-sm btn-danger" onclick="return confirm('Вы уверены?');"><i class="bi bi-trash"></i></a>
                     </td>
                 </tr>
             <?php }

@@ -83,23 +83,28 @@ final class App
      */
     public function __construct(array $config)
     {
-        $this->params = $config;
-        self::$app = $this;
-        $this->entityManager = $this->initEntityManager();
+        try {
+            $this->params = $config;
+            self::$app = $this;
+            $this->entityManager = $this->initEntityManager();
 
-        /**
-         * //TODO Сюда можно добавить разбор маршрута в консоли
-         */
-        if (!defined('CLI')) {
-            session_start();
-            $this->parseRequest();
-            /*
-             * Чтобы массив был доступен только после первого перехода на новую страницу
+            /**
+             * //TODO Сюда можно добавить разбор маршрута в консоли
              */
-            $this->flash = $_SESSION['flash'] ?? [];
-            $_SESSION['flash'] = [];
+            if (!defined('CLI')) {
+                session_start();
+                $this->parseRequest();
+                /*
+                 * Чтобы массив был доступен только после первого перехода на новую страницу
+                 */
+                $this->flash = $_SESSION['flash'] ?? [];
+                $_SESSION['flash'] = [];
 
-            $this->user = User::authorizeByKey();
+                $this->user = User::authorizeByKey();
+            }
+        } catch (\Throwable $error) {
+            $view = new View();
+            $view->render($this->getParam('errorAction') ?? '/site/error', ['error' => $error]);
         }
     }
 
@@ -108,13 +113,19 @@ final class App
      */
     public function run(): ?string
     {
-        /**
-         * В $this->route оcтавляем только массив с GET параметрами
-         */
-        $action = $this->route['action'];
-        unset($this->route['controller'],$this->route['action']);
+        try {
+            /**
+             * В $this->route оcтавляем только массив с GET параметрами
+             */
+            $action = $this->route['action'];
+            unset($this->route['controller'], $this->route['action']);
 
-        return $this->controller->runAction($action, $this->route);
+            return $this->controller->runAction($action, $this->route);
+        } catch (\Exception $error) {
+            $view = new View();
+            $view->render($this->getParam('errorAction') ?? '/site/error', ['error' => $error]);
+        }
+
     }
 
     private function parseRequest(): void

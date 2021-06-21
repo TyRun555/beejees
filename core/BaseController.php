@@ -6,7 +6,7 @@ class BaseController implements ControllerInterface
 {
     private $request; //TODO более правильная реализация, создать класс представляющий HTTP запрос
     private $response;//TODO более правильная реализация, создать класс представляющий HTTP ответ
-    protected View $view;
+    public View $view;
 
     public function __construct()
     {

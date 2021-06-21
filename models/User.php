@@ -20,13 +20,13 @@ class User extends BaseModel
     private ?int $id;
 
     /** @Column(type="string", nullable=false) */
-    private ?string $username;
+    private ?string $username = null;
 
     /** @Column(type="string", nullable=false) */
-    private ?string $password;
+    private ?string $password = null;
 
     /** @Column(type="string", nullable=true) */
-    private ?string $auth_key;
+    private ?string $auth_key = null;
 
     public array $errors = [];
     public ?string $passwordString = null;
