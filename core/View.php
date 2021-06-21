@@ -7,6 +7,7 @@ use core\interfaces\ViewInterface;
 class View implements ViewInterface
 {
     public string $layout = 'main';
+    public string $title = '';
 
     public function render(string $view, array $params = [], bool $return = false): ?string
     {

@@ -25,7 +25,7 @@ class Pagination
 
     public function getCurrentPage()
     {
-        return (int)App::$app->get($this->pageParam);
+        return (int)App::$app->get($this->pageParam) ?: 1;
     }
 
     private function getLink(int $page): string
@@ -43,28 +43,39 @@ class Pagination
         echo "<nav aria-label='Пагинация'><ul class='pagination'>";
         if ($currentPage > 1) {
             echo '<li class="page-item">
+                      <a class="page-link" href="' . $this->getLink(1) . '" aria-label="Первая">
+                          <span aria-hidden="true">&laquo;&laquo;</span>
+                      </a>
+                  </li>
+                  <li class="page-item">
                       <a class="page-link" href="' . $this->getLink($currentPage - 1) . '" aria-label="Предыдущая">
                           <span aria-hidden="true">&laquo;</span>
                       </a>
                   </li>';
         }
-        for ($page = 1; $page <= $this->pagesCount && $page <= $totalPages; $page++) {
-            if ($this->getCurrentPage() == $page) {
+        for ($page = 1;$page <= $this->pagesCount && $page <= $totalPages;$page++) {
+            $pageNumber = $currentPage < $this->pagesCount ? $page : $page + $currentPage - $this->pagesCount;
+            if ($this->getCurrentPage() == $pageNumber) {
                 echo "<li class='page-item active' aria-current='page'>
-                          <a class='page-link' href='#'>{$page}</a>
+                          <a class='page-link' href='#'>{$pageNumber}</a>
                       </li>";
             } else {
                 echo "<li class='page-item' aria-current='page'>
-                          <a class='page-link' href='".$this->getLink($page)."'>{$page}</a>
+                          <a class='page-link' href='".$this->getLink($pageNumber)."'>{$pageNumber}</a>
                       </li>";
             }
         }
         if ($currentPage < $totalPages) {
             echo '<li class="page-item">
-              <a class="page-link" href="' . $this->getLink($currentPage + 1) . '" aria-label="Следующая">
-                <span aria-hidden="true">&raquo;</span>
-              </a>
-            </li>';
+                      <a class="page-link" href="' . $this->getLink($currentPage + 1) . '" aria-label="Следующая">
+                          <span aria-hidden="true">&raquo;</span>
+                      </a>
+                  </li>
+                  <li class="page-item">
+                      <a class="page-link" href="' . $this->getLink($totalPages) . '" aria-label="Последняя">
+                          <span aria-hidden="true">&raquo;&raquo;</span>
+                      </a>
+                  </li>';
         }
         echo "</ul></nav>";
     }

@@ -1,9 +1,12 @@
 <?php
-/**
- * Основной шаблон
- */
-
 use core\App;
+use models\User;
+
+/**
+ * Шаблон для администратора
+ * @var string $content
+ * @var ?User $user
+ */
 
 ?>
 <!DOCTYPE html>
@@ -24,11 +27,10 @@ use core\App;
     <div class="wrap">
         <div class="container">
             <div class="row">
-                <div class="col-md-12 d-flex justify-content-between mb-1 mt-1">
-                    <button class="btn btn-success align-self-end" data-bs-toggle="modal" data-bs-target="#addTask">
-                        Добавить задачу +
-                    </button>
-                    <a href="/login" class="btn btn-primary align-self-start">Войти</a>
+                <div class="col-md-12 d-flex justify-content-end mb-1 mt-1">
+                    <?php if (App::$app->user) { ?>
+                        <a href="/logout" class="btn btn-danger align-self-end">Выйти</a>
+                    <?php } ?>
                 </div>
             </div>
         </div>
@@ -40,19 +42,19 @@ use core\App;
     <div class="container mt-3">
         <div class="row">
             <div class="col-md-12">
-                <?= $content; ?>
+                    <?= $content; ?>
             </div>
         </div>
     </div>
     <?php
-    if (App::$app->getFlash('success')) { ?>
+    if (App::$app->getFlash('admin-success')) { ?>
         <div class="toast-container position-absolute p-3 top-0 end-0" id="toastPlacement">
             <div class="toast show align-items-center text-white bg-success border-0" role="alert"
                  aria-live="assertive"
                  aria-atomic="true">
                 <div class="d-flex">
                     <div class="toast-body">
-                        <?= App::$app->getFlash('success'); ?>
+                        <?= App::$app->getFlash('admin-success'); ?>
                     </div>
                     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
                             aria-label="Close"></button>

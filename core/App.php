@@ -5,6 +5,7 @@ namespace core;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 use core\interfaces\ControllerInterface;
+use models\User;
 
 class App
 {
@@ -18,20 +19,29 @@ class App
     public static App $app;
     public array $post;
     public array $get;
+    public array $flash;
+    public ?User $user = null;
 
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     public function __construct(array $config)
     {
         $this->params = $config;
+        self::$app = $this;
         $this->entityManager = $this->initEntityManager();
         /**
          * //TODO Сюда можно добавить разбор маршрута в консоли
          */
 
         if (!defined('CLI')) {
-            $this->parseRequest();
             session_start();
+            $this->parseRequest();
+            $this->flash = $_SESSION['flash'] ?? [];
+            $_SESSION['flash'] = [];
+            $this->user = User::authorizeByKey();
         }
-        self::$app = $this;
+
 
     }
 
@@ -78,9 +88,6 @@ class App
                      * Случаи совпадения URL c wildcard шаблона маршрута и отличия от правила
                      */
                     if (array_search('controller', $ruleMatches[1]) !== false) {
-                        echo "<pre>";
-                        var_dump($_SERVER['QUERY_STRING']);
-                        die();
                         return array_combine(array_values($ruleMatches[1]), array_filter(array_values($urlArray)));
                     }
                 }
@@ -92,7 +99,7 @@ class App
     private function stripTagsFromRequestArray(array $arr): array
     {
         return array_map(function ($item) {
-            return strip_tags($item);
+            return is_array($item) ? $this->stripTagsFromRequestArray($item) : strip_tags($item);
         }, $arr);
     }
 
@@ -137,5 +144,20 @@ class App
     public function post(?string $name = null)
     {
         return $name ? $this->post[$name] ?? null : $this->get;
+    }
+
+    public function getFlash(string $key)
+    {
+        return $this->flash[$key] ?? null;
+    }
+
+    public function setFlash(string $key, $value)
+    {
+        $_SESSION['flash'][$key] = $value;
+    }
+
+    public function getParam(string $key)
+    {
+        return $this->params[$key] ?? null;
     }
 }

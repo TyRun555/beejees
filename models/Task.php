@@ -2,10 +2,13 @@
 
 namespace models;
 
+use core\App;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Table;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use service\Pagination;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -59,15 +62,14 @@ class Task
         return $this->id;
     }
 
-    public function setStatus(int $status): void
+    public function setStatus(array $status): void
     {
-        $oldStatus = json_decode($this->status, 1);
-        $this->status = json_encode(array_merge($oldStatus, [$status]));
+        $this->status = json_encode($status) ?? null;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): ?array
     {
-        return $this->status;
+        return json_decode($this->status , 1) ?: null;
     }
 
     public function setUsername(string $username): void
@@ -102,11 +104,28 @@ class Task
 
     public function printableStatus()
     {
-        if (is_array(self::STATUSES[$this->status])) {
+        $statuses = $this->getStatus();
+    }
 
-        } else {
-            return self::STATUSES[$this->status];
-        }
+    public static function getPagination(int $pageSize = 3)
+    {
+        $entityManager = App::$app->entityManager;
+        $page = (int)App::$app->get('taskPage') ?: 1;
+        $sortParam = substr(App::$app->get('tasksort'), 1) ?: 'id';
+        $sortDirection = substr($sortParam, 0, 1) == '-' ? 'DESC' : 'ASC';
+
+        $dql = "SELECT t FROM models\Task t ORDER BY t." . $sortParam . " " . $sortDirection;
+        $query = $entityManager->createQuery($dql);
+        $paginator = new Paginator($query);
+
+        $totalTasks = count($paginator);
+
+        $paginator->getQuery()
+            ->setFirstResult(($page - 1) * $pageSize)
+            ->setMaxResults($pageSize);
+
+        $pagination = new Pagination(3, $totalTasks, 'taskPage');
+        return ['pagination' => $pagination, 'tasks' => $paginator];
     }
 
 

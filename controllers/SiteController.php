@@ -5,54 +5,60 @@ namespace controllers;
 use core\App;
 use core\BaseController;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use models\Task;
+use models\User;
 use service\Pagination;
 
 class SiteController extends BaseController
 {
     public function actionIndex()
     {
-        $entityManager = App::$app->entityManager;
-        $page = (int)App::$app->get('page') ?: 1;
-        $pageSize = 3;
-        $sortParam = substr(App::$app->get('tasksort'), 1) ?: 'id';
-        $sortDirection = substr($sortParam, 0, 1) == '-' ? 'DESC' : 'ASC';
-
-        $dql = "SELECT t FROM models\Task t ORDER BY t." . $sortParam . " " . $sortDirection;
-        $query = $entityManager->createQuery($dql);
-        $paginator = new Paginator($query);
-
-        $totalTasks = count($paginator);
-
-        $paginator->getQuery()
-            ->setFirstResult(($page - 1) * $pageSize)
-            ->setMaxResults($pageSize);
-
-        $pagination = new Pagination(3,  $totalTasks, 'taskPage');
-
-        $this->view->render('site/index', [
-            'tasks' => $paginator,
-            'pagination' => $pagination
-        ]);
+        $this->view->render('site/index', Task::getPagination());
     }
 
-    public function actionLogin()
+    /**
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\ORMException
+     */
+    public function actionLogin(): ?string
     {
-        echo 'login';
+        $this->view->layout = 'admin';
+        if ($post = App::$app->post('User')) {
+            $user = new User();
+            $username = $post['username'] ?? null;
+            $password = $post['password'] ?? null;
+            if (!$username || !$password) {
+                $user->errors[] = 'Укажите имя пользователя и пароль!';
+                return $this->view->render('site/login', ['user' => $user]);
+            } else {
+                $user->setUsername($username);
+                $user->passwordString = $password;
+                if ($user->login()) {
+                    $this->redirect('/site/admin');
+                }
+                return $this->view->render('site/login', ['user' => $user]);
+            }
+        }
+        if (!App::$app->user) {
+            return $this->view->render('site/login', ['user' => new User()]);
+        }
+        $this->redirect('/site/admin');
     }
 
     public function actionLogout()
     {
-        echo 'logout';
-    }
-
-    public function actionAddTask()
-    {
-
+        App::$app->user->logout();
+        $this->redirect('/');
     }
 
     public function actionAdmin()
     {
-
+        $this->view->layout = 'admin';
+        $user = App::$app->user;
+        if ($user) {
+            return $this->view->render('site/admin', array_merge(Task::getPagination(), ['user' => $user]));
+        }
+        $this->redirect('/login');
     }
 
 }

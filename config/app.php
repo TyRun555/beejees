@@ -13,5 +13,6 @@ return [
         '/login' => 'site/login',
         '/logout' => 'site/logout',
         '/<controller>/<action>' => '<controller>/<action>'
-    ]
+    ],
+    'cookieSalt' => 'sdfsdf2332feswdfwedfsd'
 ];

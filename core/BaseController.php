@@ -6,8 +6,6 @@ class BaseController implements ControllerInterface
 {
     private $request;
     private $response;
-    private $status;
-    private $headers;
     protected $view;
 
     public function __construct()
@@ -15,6 +13,9 @@ class BaseController implements ControllerInterface
         $this->view = new View();
     }
 
+    /**
+     * @throws \Exception
+     */
     public function runAction(string $name, array $params = [])
     {
         $name = 'action'.ucfirst($name);
@@ -22,6 +23,12 @@ class BaseController implements ControllerInterface
             return $this->$name(extract($params));
         }
         throw new \Exception("Wrong action");
+    }
+
+    protected function redirect(string $url)
+    {
+        header("Location: $url");
+        exit;
     }
 
 }
