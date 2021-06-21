@@ -8,24 +8,34 @@ use core\interfaces\ControllerInterface;
 
 class App
 {
-    public array $params;
+    private array $params;
     private ControllerInterface $controller;
     private array $route;
-    private array $post;
-    private array $get;
+
     private string $controllersNameSpace = 'controllers\\';
 
     public EntityManager $entityManager;
+    public static App $app;
+    public array $post;
+    public array $get;
 
     public function __construct(array $config)
     {
         $this->params = $config;
-        $this->parseRequest();
         $this->entityManager = $this->initEntityManager();
-        session_start();
+        /**
+         * //TODO Сюда можно добавить разбор маршрута в консоли
+         */
+
+        if (!defined('CLI')) {
+            $this->parseRequest();
+            session_start();
+        }
+        self::$app = $this;
+
     }
 
-    public function run(): string
+    public function run(): ?string
     {
         return $this->controller->runAction($this->route['action']);
     }
@@ -34,27 +44,49 @@ class App
     {
         $this->post = $this->stripTagsFromRequestArray($_POST);
         $this->get = $this->stripTagsFromRequestArray($_GET);
-        $this->route = $this->parseUrl();
-        $this->controller = $this->getController();
+        $this->route = $this->getRouteFromUrl();
+        if (!defined('CLI')) {
+            $this->controller = $this->getController();
+        }
+
     }
 
-    private function parseUrl(): array
+    /**
+     * Метод порсит URL запроса с учетом передачи wildcard шаблона URL через конфиг
+     * Например:
+     *  - <controller>/<action>/<id> => /<controller>/<action>' (значение всегда ДОЛЖНО соответствует шаблону <controller>/<action>)
+     *  Т.е. URL /task/delete/46 будет соответствовать вызову TaskController::actionDelete($id = 46)
+     *
+     * @return array массив с составляющими маршрута
+     */
+    private function getRouteFromUrl(): array
     {
-        $urlArray = explode('/', $this->getUrl());
-        if (!empty($this->config['urlMap'])) {
-            foreach ($this->params['urlMap'] as $rule => $route) {
-                $parts = explode('/', $rule);
-                $route = explode('/', $route);
-                if (count($urlArray) == count($parts)) {
-                    $params = [];
-                    foreach (array_slice($urlArray, count($parts)) as $k => $param) {
-                        $params[$parts[$k]] = strip_tags(urldecode($param));
+        $url = $this->getUrl();
+        $urlArray = explode('/', $url);
+
+        if (!empty($this->params['routes'])) {
+            foreach ($this->params['routes'] as $rule => $route) {
+                $ruleParts = explode('/', $rule);
+                $routeParts = explode('/', $route);
+                $params = [];
+                preg_match_all('/<([^<>]*)>/', $rule, $ruleMatches);
+                preg_match_all('/<([^<>]*)>/', $route, $routeMatches);
+                if ($url == $rule && empty($matches[1])) {
+                    return ['controller' => array_shift($routeParts), 'action' => array_shift($routeParts), 'params' => $params];
+                } else {
+                    /**
+                     * Случаи совпадения URL c wildcard шаблона маршрута и отличия от правила
+                     */
+                    if (array_search('controller', $ruleMatches[1]) !== false) {
+                        echo "<pre>";
+                        var_dump($_SERVER['QUERY_STRING']);
+                        die();
+                        return array_combine(array_values($ruleMatches[1]), array_filter(array_values($urlArray)));
                     }
-                    return ['controller' => $route[0], 'action' => $route[1], 'params' => $params];
                 }
             }
         }
-        return ['controller' => $urlArray[0], 'action' => $urlArray[1], 'params' => []];
+        return ['controller' => array_shift($urlArray), 'action' => array_shift($urlArray), 'params' => $urlArray];
     }
 
     private function stripTagsFromRequestArray(array $arr): array
@@ -66,7 +98,7 @@ class App
 
     private function getUrl(): string
     {
-        return $_SERVER['REQUEST_URI'];
+        return stristr($_SERVER['REQUEST_URI'], '?') ? explode("?", $_SERVER['REQUEST_URI'])[0] : $_SERVER['REQUEST_URI'];
     }
 
     private function getControllerNameFromRoute(): string
@@ -95,5 +127,15 @@ class App
     {
         $controllerClass = $this->getControllerNameFromRoute();
         return new $controllerClass;
+    }
+
+    public function get(?string $name = null)
+    {
+        return $name ? $this->get[$name] ?? null : $this->get;
+    }
+
+    public function post(?string $name = null)
+    {
+        return $name ? $this->post[$name] ?? null : $this->get;
     }
 }

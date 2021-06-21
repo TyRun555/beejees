@@ -1,7 +1,7 @@
 <?php
 use core\App;
-
-$_SERVER['REQUEST_URI'] = 'site/index';
+ini_set('display_errors', 1);
+error_reporting(~0);
 require dirname(__DIR__)."/vendor/autoload.php";
 
 spl_autoload_extensions(".php");
@@ -17,6 +17,7 @@ if (file_exists($configLocal)) {
 }
 
 $app = new App($config);
-if (!defined(CLI)) {
+
+if (!defined('CLI')) {
     $app->run();
 }

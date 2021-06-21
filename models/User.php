@@ -1,5 +1,5 @@
 <?php
-namespace Models;
+namespace models;
 
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;

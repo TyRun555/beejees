@@ -1,0 +1,72 @@
+<?php
+namespace service;
+
+use core\App;
+
+class Pagination
+{
+    public $pageSize = 10;
+    public $totalItems = 0;
+    public $pageParam = 'page';
+    public $pagesCount = 5;
+
+    public function __construct(?int $pageSize = null, ?int $totalItems = null, ?string $pageParam = null, int $pagesCount = null)
+    {
+        $this->pageSize = $pageSize ?? $this->pageSize;
+        $this->totalItems = $totalItems ?? $this->totalItems;
+        $this->pageParam = $pageParam ?? $this->pageParam;
+        $this->pagesCount = $pagesCount ?? $this->pagesCount;
+    }
+
+    public function getTotalPages()
+    {
+        return ceil($this->totalItems / $this->pageSize);
+    }
+
+    public function getCurrentPage()
+    {
+        return (int)App::$app->get($this->pageParam);
+    }
+
+    private function getLink(int $page): string
+    {
+        return '?' . $this->pageParam . '=' . $page;
+    }
+
+    public function renderPagination()
+    {
+        $totalPages = $this->getTotalPages();
+        if ($totalPages == 0) {
+            return;
+        }
+        $currentPage = $this->getCurrentPage();
+        echo "<nav aria-label='Пагинация'><ul class='pagination'>";
+        if ($currentPage > 1) {
+            echo '<li class="page-item">
+                      <a class="page-link" href="' . $this->getLink($currentPage - 1) . '" aria-label="Предыдущая">
+                          <span aria-hidden="true">&laquo;</span>
+                      </a>
+                  </li>';
+        }
+        for ($page = 1; $page <= $this->pagesCount && $page <= $totalPages; $page++) {
+            if ($this->getCurrentPage() == $page) {
+                echo "<li class='page-item active' aria-current='page'>
+                          <a class='page-link' href='#'>{$page}</a>
+                      </li>";
+            } else {
+                echo "<li class='page-item' aria-current='page'>
+                          <a class='page-link' href='".$this->getLink($page)."'>{$page}</a>
+                      </li>";
+            }
+        }
+        if ($currentPage < $totalPages) {
+            echo '<li class="page-item">
+              <a class="page-link" href="' . $this->getLink($currentPage + 1) . '" aria-label="Следующая">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>';
+        }
+        echo "</ul></nav>";
+    }
+
+}

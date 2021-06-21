@@ -5,6 +5,7 @@ use Doctrine\Migrations\Configuration\Migration\PhpFile;
 use Doctrine\Migrations\DependencyFactory;
 
 const CLI = true;
+$_SERVER['REQUEST_URI'] = '/site/index';
 include 'public/index.php';
 
 $entityManager = $app->entityManager;

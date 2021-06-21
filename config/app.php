@@ -7,5 +7,11 @@ return [
         'password' => 'root',
         'dbname'   => 'beejee_app'
     ],
-    'doctrineDevMode' =>  false
+    'doctrineDevMode' =>  false,
+    'routes' => [
+        '/' => 'site/index',
+        '/login' => 'site/login',
+        '/logout' => 'site/logout',
+        '/<controller>/<action>' => '<controller>/<action>'
+    ]
 ];
