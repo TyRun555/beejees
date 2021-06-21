@@ -1,10 +1,13 @@
-[data-sorted][data-sort-direction="-"]::after {
-    content: "↑";
+.sortable {
+    cursor: pointer;
+}
+.sortable:after {
     margin-left: 6px;
     font-weight: bold;
 }
-[data-sorted][data-sort-direction=""]::after {
+[data-sorted][data-sort-direction="-"]:after, [data-sort-direction=""]:hover:after {
+    content: "↑";
+}
+[data-sorted][data-sort-direction=""]:after, [data-sort-direction="-"]:hover:after {
     content: "↓";
-    margin-left: 6px;
-    font-weight: bold;
 }

@@ -36,6 +36,10 @@ var toastList = toastElList.map(function (toastEl) {
 
 /**
  * Сортировка таблиц
+ *
+ * Используется для превращения заголовков таблиц триггеры сортировки
+ *
+ * TODO В дальнейшем лучше вынести в отдельный компонент
  */
 const sortable = document.getElementsByClassName('sortable');
 if (sortable && sortable.length) {
