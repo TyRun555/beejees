@@ -104,7 +104,7 @@ final class App
             }
         } catch (\Throwable $error) {
             $view = new View();
-            $view->render($this->getParam('errorAction') ?? '/site/error', ['error' => $error]);
+            return $view->render($this->getParam('errorAction') ?? '/site/error', ['error' => $error]);
         }
     }
 
