@@ -108,9 +108,6 @@ final class App
         }
     }
 
-    /**
-     * @throws \Exception
-     */
     public function run(): ?string
     {
         try {
@@ -123,9 +120,8 @@ final class App
             return $this->controller->runAction($action, $this->route);
         } catch (\Exception $error) {
             $view = new View();
-            $view->render($this->getParam('errorAction') ?? '/site/error', ['error' => $error]);
+            return $view->render($this->getParam('errorAction') ?? '/site/error', ['error' => $error]);
         }
-
     }
 
     private function parseRequest(): void
