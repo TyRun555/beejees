@@ -34,7 +34,7 @@ $this->title = 'Задачи';
                 </tr>
             <?php }
         } else { ?>
-            <td colspan="4">Список задач пуст</td>
+            <td colspan="5">Список задач пуст</td>
         <?php } ?>
     </table>
 </div>
