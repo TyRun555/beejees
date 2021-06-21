@@ -1,4 +1,7 @@
 <?php
+/**
+ * Требуется для работы doctrine-migrations
+ */
 
 use Doctrine\Migrations\Configuration\EntityManager\ExistingEntityManager;
 use Doctrine\Migrations\Configuration\Migration\PhpFile;

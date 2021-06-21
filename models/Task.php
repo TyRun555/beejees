@@ -3,6 +3,7 @@
 namespace models;
 
 use core\App;
+use core\BaseModel;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Id;
@@ -16,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @Entity
  * @Table(name="tasks")
  */
-class Task
+class Task extends BaseModel
 {
     const STATUS_NEW = null;
     const STATUS_EDITED = 1;

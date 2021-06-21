@@ -4,9 +4,9 @@ use core\interfaces\ControllerInterface;
 
 class BaseController implements ControllerInterface
 {
-    private $request;
-    private $response;
-    protected $view;
+    private $request; //TODO более правильная реализация, создать класс представляющий HTTP запрос
+    private $response;//TODO более правильная реализация, создать класс представляющий HTTP ответ
+    protected View $view;
 
     public function __construct()
     {
@@ -25,7 +25,7 @@ class BaseController implements ControllerInterface
         throw new \Exception("Wrong action");
     }
 
-    protected function redirect(string $url)
+    public function redirect(string $url)
     {
         header("Location: $url");
         exit;

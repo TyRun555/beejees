@@ -8,6 +8,10 @@ use models\Task;
 class TaskController extends BaseController
 {
 
+    /**
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\ORMException
+     */
     public function actionAdd()
     {
         $post = App::$app->post('Task');

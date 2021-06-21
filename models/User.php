@@ -3,31 +3,33 @@
 namespace models;
 
 use core\App;
+use core\BaseModel;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Table;
 
 /**
+ * Сущность представляющая пользователя
  * @Entity
  * @Table(name="users")
  */
-class User
+class User extends BaseModel
 {
     /** @Id @Column(type="integer") @GeneratedValue */
-    private $id;
+    private ?int $id;
 
     /** @Column(type="string", nullable=false) */
-    private $username;
+    private ?string $username;
 
     /** @Column(type="string", nullable=false) */
-    private $password;
+    private ?string $password;
 
     /** @Column(type="string", nullable=true) */
-    private $auth_key;
+    private ?string $auth_key;
 
     public array $errors = [];
-    public $passwordString = null;
+    public ?string $passwordString = null;
 
     public function setId(int $id)
     {
@@ -82,16 +84,17 @@ class User
         if ($instance instanceof User && password_verify($this->passwordString, $instance->password)) {
             $this->errors = [];
             $instance->auth_key = md5(time() . App::$app->getParam('cookieSalt'));
-            setcookie('auth_key', $instance->auth_key, time() + 3600, '/');
+            setcookie('auth_key', $instance->auth_key, time() + 3600, '/'); //выдаем токен на час
             App::$app->entityManager->persist($instance);
             App::$app->entityManager->flush();
             return true;
         }
-        $this->errors[] = 'Неверный логин или пароль!';
+        $this->errors[] = 'Неверное имя пользователя или пароль!';
         return false;
     }
 
     /**
+     * Логиним пользователя по токену
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public static function authorizeByKey(): ?User
