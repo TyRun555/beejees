@@ -5,9 +5,9 @@
     margin-left: 6px;
     font-weight: bold;
 }
-[data-sorted][data-sort-direction="-"]:after, [data-sort-direction=""]:hover:after {
+[data-sorted][data-sort-direction="-"]:after, [data-sort-direction=""]:hover:after, [data-sorted][data-sort-direction=""]:hover:after {
     content: "↑";
 }
-[data-sorted][data-sort-direction=""]:after, [data-sort-direction="-"]:hover:after {
+[data-sorted][data-sort-direction=""]:after, [data-sort-direction="-"]:hover:after, [data-sorted][data-sort-direction="-"]:hover:after {
     content: "↓";
 }

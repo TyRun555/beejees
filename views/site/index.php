@@ -42,7 +42,7 @@ $this->title = 'Задачи';
             </div>
             <div class="modal-body">
                 <form id="addTaskForm" class="row g-3 needs-validation" action="/task/add" method="post" novalidate>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label for="taskEmail" class="form-label">Email</label>
                         <div class="input-group has-validation">
                             <input type="email" name="Task[email]" class="form-control" id="taskEmail" value=""
@@ -52,7 +52,7 @@ $this->title = 'Задачи';
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4 ">
+                    <div class="col-md-6">
                         <label for="taskUsername" class="form-label">Имя пользователя</label>
                         <div class="input-group has-validation">
                             <input type="text" class="form-control" name="Task[username]" id="taskUsername" value=""
