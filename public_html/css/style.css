@@ -7,9 +7,11 @@
 }
 [data-sorted][data-sort-direction="-"]:after, [data-sort-direction=""]:hover:after, [data-sorted][data-sort-direction=""]:hover:after {
     content: "↑";
-    color: blue;
 }
 [data-sorted][data-sort-direction=""]:after, [data-sort-direction="-"]:hover:after, [data-sorted][data-sort-direction="-"]:hover:after {
     content: "↓";
-    color: blue;
+}
+
+[data-sort-direction=""]:hover:after, [data-sorted][data-sort-direction=""]:hover:after, [data-sort-direction="-"]:hover:after, [data-sorted][data-sort-direction="-"]:hover:after {
+    color: #0c63e4;
 }
