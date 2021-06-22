@@ -28,7 +28,7 @@ use models\User;
     <div class="wrap bg-dark">
         <div class="container">
             <div class="row">
-                <div class="col-10">
+                <div class="col-8">
                     <nav class="navbar navbar-dark bg-dark">
                         <ul class="navbar-nav mr-auto">
                             <li class="nav-item">
@@ -37,10 +37,9 @@ use models\User;
                                 </a>
                             </li>
                         </ul>
-
                     </nav>
                 </div>
-                <div class="col-md-2 d-flex justify-content-end align-items-center mb-1 mt-1">
+                <div class="col-4 d-flex justify-content-end align-items-center mb-1 mt-1">
                     <?php if (App::$app->user) { ?>
                         <a href="/logout" class="btn btn-danger">Выйти</a>
                     <?php } ?>
