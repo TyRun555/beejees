@@ -142,8 +142,10 @@ class Task extends BaseModel
             : App::$app->get('sort');
 
         $sortDirection = substr(App::$app->get('sort'), 0, 1) == '-' ? 'DESC' : 'ASC';
-
-        $sortDirection = $sortParam == 'status' && $sortDirection == 'ASC' ? 'DESC' : $sortDirection; //Для статуса обратная логика из-за типа колонки JSON
+        //Для статуса обратная логика из-за типа колонки JSON
+        if ($sortParam == 'status') {
+            $sortDirection = $sortDirection == 'ASC' ? 'DESC' : 'ASC';
+        }
 
         $dql = "SELECT t FROM models\Task t ORDER BY t." . ($sortParam ?: 'id') . " " . $sortDirection;
         $query = $entityManager->createQuery($dql);

@@ -1,4 +1,5 @@
 <?php
+
 use core\App;
 use models\User;
 
@@ -32,9 +33,16 @@ use models\User;
                     <nav class="navbar navbar-dark bg-dark">
                         <ul class="navbar-nav mr-auto">
                             <li class="nav-item">
-                                <a class="nav-link <?= App::$app->getUrl() == '/admin' ? 'active' : '' ?>" href="/admin">
-                                    Список задач
-                                </a>
+                                <? if (App::$app->user) { ?>
+                                    <a class="nav-link <?= App::$app->getUrl() == '/admin' ? 'active' : '' ?>"
+                                       href="/admin">
+                                        Список задач
+                                    </a>
+                                <?php } else { ?>
+                                    <a class="nav-link" href="/">
+                                        Список задач
+                                    </a>
+                                <? } ?>
                             </li>
                         </ul>
                     </nav>
@@ -54,7 +62,7 @@ use models\User;
     <div class="container mt-3">
         <div class="row">
             <div class="col-md-12">
-                    <?= $content; ?>
+                <?= $content; ?>
             </div>
         </div>
     </div>
@@ -75,19 +83,19 @@ use models\User;
         </div>
     <?php }
     if (App::$app->getFlash('admin-error')) { ?>
-    <div class="toast-container position-absolute p-3 top-0 end-0" id="toastPlacement">
-        <div class="toast show align-items-center text-white bg-danger border-0" role="alert"
-             aria-live="assertive"
-             aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                    <?= App::$app->getFlash('admin-error'); ?>
+        <div class="toast-container position-absolute p-3 top-0 end-0" id="toastPlacement">
+            <div class="toast show align-items-center text-white bg-danger border-0" role="alert"
+                 aria-live="assertive"
+                 aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <?= App::$app->getFlash('admin-error'); ?>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                            aria-label="Close"></button>
                 </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                        aria-label="Close"></button>
             </div>
         </div>
-    </div>
     <?php } ?>
 </main>
 </body>
