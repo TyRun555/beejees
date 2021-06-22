@@ -15,7 +15,7 @@ $this->title = 'Задачи';
         <tr>
             <th class="col-2 sortable" data-sort-param="username" data-sort-direction="">Имя пользователя</th>
             <th class="col-2 sortable" data-sort-param="email" data-sort-direction="">Email</th>
-            <th class="col-6">Содержание</th>
+            <th class="col-6">Текст задачи</th>
             <th class="col-2 sortable" data-sort-param="status" data-sort-direction="">Статус</th>
             <th class="col-1">Действие</th>
         </tr>
